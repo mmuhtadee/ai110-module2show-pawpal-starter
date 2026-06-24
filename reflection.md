@@ -1,6 +1,9 @@
 # PawPal+ Project Reflection
 
 ## 1. System Design
+- Add pet profiles
+- Schedule tasks for a pet
+- View the schedule
 
 **a. Initial design**
 
