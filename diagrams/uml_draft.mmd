@@ -1,0 +1,55 @@
+classDiagram
+    direction LR
+    
+    class Owner {
+        +String name
+        +String email
+        +String phone
+        +List~Pet~ pets
+        +add_pet(pet: Pet)
+        +remove_pet(pet_name: String)
+        +get_all_tasks() List
+        +view_schedule()
+    }
+
+    class Pet {
+        +String name
+        +String breed
+        +int age
+        +String species
+        +List~Task~ tasks
+        +add_task(task: Task)
+        +remove_task(task_name: String)
+        +get_pending_tasks() List
+        +get_task_by_type(task_type: String) List
+    }
+
+    class Task {
+        +String name
+        +String task_type
+        +datetime scheduled_time
+        +String frequency
+        +String status
+        +int duration_minutes
+        +String notes
+        +mark_complete()
+        +mark_skipped()
+        +reschedule(new_time: datetime)
+        +is_overdue() bool
+    }
+
+    class Scheduler {
+        +List~Owner~ owners
+        +List~tuple~ task_queue
+        +load_tasks(owner: Owner)
+        +sort_by_time()
+        +get_upcoming_tasks(hours: int) List
+        +send_reminders()
+        +generate_daily_summary(owner: Owner) String
+    }
+
+    Owner "1" --> "*" Pet : owns
+    Pet "1" --> "*" Task : tracks
+    Scheduler ..> Owner : coordinates
+    Scheduler ..> Pet : schedules
+    Scheduler ..> Task : queues
