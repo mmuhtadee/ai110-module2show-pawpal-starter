@@ -1,52 +1,77 @@
-from datetime import datetime, timedelta
 from pawpal_system import Owner, Pet, Task, Scheduler
 
+
+def print_schedule(owner: Owner) -> None:
+    print("=" * 40)
+    print("       TODAY'S SCHEDULE - PawPal+")
+    print("=" * 40)
+    print(f"Owner : {owner.name}\n")
+
+    for pet in owner.pets:
+        print(f"  [{pet.species}] {pet.name}")
+        print(f"  {'-' * 30}")
+        tasks = pet.get_tasks()
+        if not tasks:
+            print("    No tasks scheduled.")
+        for task in tasks:
+            status = "DONE" if task.is_completed else "PENDING"
+            print(f"    {task.time}  |  {task.description:<25} |  {task.frequency:<8}  |  [{status}]")
+        print()
+
+    print("=" * 40)
+
+
 def main():
-    print("🚀 Initializing PawPal+ CLI Demo Test Ground...\n")
-    
-    # 1. Create Owner and Pets
-    owner = Owner(name="Munshat", email="munshat@example.com", phone="555-0199")
-    
-    dog = Pet(name="Buddy", breed="Golden Retriever", age=3, species="Dog")
-    cat = Pet(name="Luna", breed="Siamese", age=2, species="Cat")
-    
+    # --- Create owner ---
+    owner = Owner(name="Alex")
+
+    # --- Create pets ---
+    dog = Pet(name="Buddy", species="Dog")
+    cat = Pet(name="Luna", species="Cat")
+
     owner.add_pet(dog)
     owner.add_pet(cat)
-    
-    # 2. Add Tasks (Deliberately out of order to verify sorting later)
-    now = datetime.now()
-    
-    task1 = Task(name="Evening Walk", task_type="walk", scheduled_time=now + timedelta(hours=6), frequency="daily")
-    task2 = Task(name="Morning Feeding", task_type="feeding", scheduled_time=now + timedelta(hours=1), frequency="daily")
-    # This task3 deliberately conflicts with task2's exact time to test conflict detection!
-    task3 = Task(name="Luna Insulin Shot", task_type="medication", scheduled_time=now + timedelta(hours=1), frequency="daily")
-    
-    dog.add_task(task1)
-    dog.add_task(task2)
-    cat.add_task(task3)
-    
-    # 3. Load Engine & Check Conflicts
-    scheduler = Scheduler()
-    scheduler.load_tasks(owner)
-    
-    print("--- Conflict Check ---")
-    conflicts = scheduler.check_conflicts()
-    if conflicts:
-        for warning in conflicts:
-            print(warning)
-    else:
-        print("✅ No schedule conflicts detected.")
-        
-    # 4. Sort and View Schedule
-    print("\n--- Sorting Tasks Chronologically ---")
-    scheduler.sort_by_time()
-    
-    for pet, task in scheduler.task_queue:
-        print(f"⏰ {task.scheduled_time.strftime('%H:%M')} | [{pet.name}] {task.name} ({task.status})")
 
-    # 5. Test Summary Output
-    print("\n--- System Metrics ---")
-    print(scheduler.generate_daily_summary(owner))
+    # --- Add tasks to Buddy ---
+    dog.add_task(Task(description="Morning walk",   time="08:00", frequency="Daily"))
+    dog.add_task(Task(description="Lunch feeding",  time="12:00", frequency="Daily"))
+    dog.add_task(Task(description="Evening walk",   time="18:00", frequency="Daily"))
+
+    # --- Add tasks to Luna ---
+    cat.add_task(Task(description="Breakfast",      time="08:30", frequency="Daily"))
+    cat.add_task(Task(description="Medication",     time="12:00", frequency="Weekly"))
+    cat.add_task(Task(description="Dinner",         time="19:00", frequency="Daily"))
+
+    # --- Mark one task complete to show the status column works ---
+    dog.get_tasks()[0].mark_complete()
+
+    # --- Print human-readable schedule ---
+    print_schedule(owner)
+
+    # --- Demonstrate Scheduler ---
+    scheduler = Scheduler(owner)
+
+    sorted_tasks = scheduler.sort_by_time()
+    print("Tasks sorted by time:")
+    for task in sorted_tasks:
+        print(f"  {task.time}  {task.description}")
+
+    print()
+    pending = scheduler.filter_by_status(status=False)
+    print(f"Pending tasks : {len(pending)}")
+    done = scheduler.filter_by_status(status=True)
+    print(f"Completed tasks: {len(done)}")
+
+    print()
+    conflicts = scheduler.detect_conflicts()
+    if conflicts:
+        print("Scheduling conflicts detected:")
+        for group in conflicts:
+            names = ", ".join(t.description for t in group)
+            print(f"  {group[0].time}  ->  {names}")
+    else:
+        print("No scheduling conflicts detected.")
+
 
 if __name__ == "__main__":
     main()

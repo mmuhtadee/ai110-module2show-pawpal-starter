@@ -47,6 +47,37 @@ pip install -r requirements.txt
 Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
 
 ```
+========================================
+       TODAY'S SCHEDULE - PawPal+
+========================================
+Owner : Alex
+
+  [Dog] Buddy
+  ------------------------------
+    08:00  |  Morning walk              |  Daily     |  [DONE]
+    12:00  |  Lunch feeding             |  Daily     |  [PENDING]
+    18:00  |  Evening walk              |  Daily     |  [PENDING]
+
+  [Cat] Luna
+  ------------------------------
+    08:30  |  Breakfast                 |  Daily     |  [PENDING]
+    12:00  |  Medication                |  Weekly    |  [PENDING]
+    19:00  |  Dinner                    |  Daily     |  [PENDING]
+
+========================================
+Tasks sorted by time:
+  08:00  Morning walk
+  08:30  Breakfast
+  12:00  Lunch feeding
+  12:00  Medication
+  18:00  Evening walk
+  19:00  Dinner
+
+Pending tasks : 5
+Completed tasks: 1
+
+Scheduling conflicts detected:
+  12:00  ->  Lunch feeding, Medication
 # e.g.:
 # Daily plan for Biscuit (Golden Retriever):
 #   08:00 — Morning walk (30 min) [priority: high]

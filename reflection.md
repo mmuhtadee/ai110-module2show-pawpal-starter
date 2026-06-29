@@ -8,7 +8,12 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+My initial UML design splits the app into four core classes (Owner, Pet, Task, Scheduler) to cleanly separate who owns the data, what the data is, and how the schedule gets managed.
 - What classes did you include, and what responsibilities did you assign to each?
+Owner: Represents the human.
+Pet: Represents the animal.
+Task: Represents each objective.
+Scheduler: Utilizes owner's data to manage the schedule gracefully.
 
 **b. Design changes**
 
