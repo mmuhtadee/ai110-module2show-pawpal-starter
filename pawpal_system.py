@@ -1,5 +1,12 @@
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from typing import List
+
+
+_FREQUENCY_DELTAS = {
+    "Daily": timedelta(days=1),
+    "Weekly": timedelta(weeks=1),
+}
 
 
 @dataclass
@@ -8,10 +15,31 @@ class Task:
     time: str           # "HH:MM"
     frequency: str      # e.g. "Daily", "Weekly"
     is_completed: bool = False
+    date: str = ""      # "YYYY-MM-DD"; empty string means no specific date set
 
     def mark_complete(self) -> None:
         """Mark this task as completed."""
         self.is_completed = True
+
+    def generate_next_occurrence(self, current_date: str) -> "Task":
+        """Return a new incomplete Task scheduled one period after current_date.
+
+        Raises ValueError for unrecognised frequency strings.
+        """
+        delta = _FREQUENCY_DELTAS.get(self.frequency)
+        if delta is None:
+            raise ValueError(
+                f"Unsupported frequency '{self.frequency}'. "
+                f"Expected one of: {list(_FREQUENCY_DELTAS)}"
+            )
+        next_date = (datetime.strptime(current_date, "%Y-%m-%d") + delta).strftime("%Y-%m-%d")
+        return Task(
+            description=self.description,
+            time=self.time,
+            frequency=self.frequency,
+            is_completed=False,
+            date=next_date,
+        )
 
 
 @dataclass
