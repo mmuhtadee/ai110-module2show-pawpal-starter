@@ -32,15 +32,17 @@ def main():
     owner.add_pet(dog)
     owner.add_pet(cat)
 
-    # --- Add tasks to Buddy ---
-    dog.add_task(Task(description="Morning walk",   time="08:00", frequency="Daily"))
-    dog.add_task(Task(description="Lunch feeding",  time="12:00", frequency="Daily"))
+    # --- Add tasks to Buddy (intentionally out of order) ---
     dog.add_task(Task(description="Evening walk",   time="18:00", frequency="Daily"))
+    dog.add_task(Task(description="Lunch feeding",  time="12:00", frequency="Daily"))
+    dog.add_task(Task(description="Morning walk",   time="08:00", frequency="Daily"))
+    dog.add_task(Task(description="Vet check-in",   time="09:00", frequency="Weekly"))  # conflict demo
 
-    # --- Add tasks to Luna ---
-    cat.add_task(Task(description="Breakfast",      time="08:30", frequency="Daily"))
-    cat.add_task(Task(description="Medication",     time="12:00", frequency="Weekly"))
+    # --- Add tasks to Luna (intentionally out of order) ---
     cat.add_task(Task(description="Dinner",         time="19:00", frequency="Daily"))
+    cat.add_task(Task(description="Medication",     time="12:00", frequency="Weekly"))
+    cat.add_task(Task(description="Breakfast",      time="08:30", frequency="Daily"))
+    cat.add_task(Task(description="Grooming",       time="09:00", frequency="Weekly"))  # conflict demo
 
     # --- Mark one task complete to show the status column works ---
     dog.get_tasks()[0].mark_complete()
@@ -52,9 +54,9 @@ def main():
     scheduler = Scheduler(owner)
 
     sorted_tasks = scheduler.sort_by_time()
-    print("Tasks sorted by time:")
+    print("Tasks sorted chronologically:")
     for task in sorted_tasks:
-        print(f"  {task.time}  {task.description}")
+        print(f"  {task.time}  |  {task.description}")
 
     print()
     pending = scheduler.filter_by_status(status=False)
@@ -65,10 +67,10 @@ def main():
     print()
     conflicts = scheduler.detect_conflicts()
     if conflicts:
-        print("Scheduling conflicts detected:")
+        print(f"WARNING: {len(conflicts)} scheduling conflict(s) detected!")
         for group in conflicts:
-            names = ", ".join(t.description for t in group)
-            print(f"  {group[0].time}  ->  {names}")
+            names = ", ".join(f'"{t.description}"' for t in group)
+            print(f"  [{group[0].time}]  ->  {names}")
     else:
         print("No scheduling conflicts detected.")
 

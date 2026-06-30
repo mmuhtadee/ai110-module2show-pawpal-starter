@@ -103,14 +103,13 @@ Sample test output:
 
 ## 📐 Smarter Scheduling
 
-> Fill in once you've implemented scheduling logic.
-
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | `Scheduler.sort_by_time()` | Returns all tasks across all pets sorted chronologically by `"HH:MM"` string. Works correctly because lexicographic order matches time order for zero-padded 24-hour strings. |
+| Filtering | `Scheduler.filter_by_status(status: bool)` | Pass `True` for completed tasks, `False` for pending. Returns a flat list across all pets. |
+| Filtering | `Scheduler.filter_by_pet(pet_name: str)` | Returns only the tasks belonging to the named pet. Returns `[]` if the pet is not found. |
+| Conflict detection | `Scheduler.detect_conflicts()` | Groups all tasks by their `"HH:MM"` time slot and returns a list of groups where two or more tasks share the exact same time. Returns `[]` if no conflicts exist. |
+| Recurring tasks | `Task.frequency` (`"Daily"` / `"Weekly"`) | Frequency is stored on each `Task`. The next step is `Scheduler.complete_and_reschedule(pet, task)` to auto-generate the next occurrence when a recurring task is marked done. |
 
 ## 📸 Demo Walkthrough
 

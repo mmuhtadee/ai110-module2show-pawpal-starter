@@ -59,6 +59,13 @@ class Scheduler:
         """Return tasks whose is_completed matches the given status."""
         return [task for task in self.owner.get_all_tasks() if task.is_completed == status]
 
+    def filter_by_pet(self, pet_name: str) -> List[Task]:
+        """Return tasks belonging to the pet with the given name, or [] if not found."""
+        for pet in self.owner.pets:
+            if pet.name == pet_name:
+                return pet.get_tasks()
+        return []
+
     def detect_conflicts(self) -> List[List[Task]]:
         """Return groups of tasks scheduled at the exact same time."""
         time_map: dict[str, List[Task]] = {}
